@@ -1,9 +1,47 @@
+import { useState } from "react";
+import { IMaskInput } from "react-imask";
+
 import { ChevronRight } from "lucide-react";
 import { InputWrapper } from "./components/InputWrapper";
 import person from "./assets/person.svg";
-import sticker from './assets/sticker.png'
+import sticker from "./assets/sticker.png";
 
 export function App() {
+  const [dailyGoal, setDailyGoal] = useState<number>(50);
+  const [quantity, setQuantity] = useState<number>(5);
+  const [totalPercentage, setTotalPercentage] = useState(0)
+  const [percentage, setPercentage] = useState(0)
+
+  const [hours, setHours] = useState(0)
+  const [minutes, setMinutes] = useState(0)
+  
+  function turnIntoSeconds() {
+    const hoursToSeconds = hours * 3600
+    const minutesToSeconds = minutes * 60
+
+    console.log(`Hora para segundos: ${hoursToSeconds}, Minutos para segundos: ${minutesToSeconds}`)
+    return {hoursToSeconds, minutesToSeconds}
+  }
+
+  function timer() {
+    const { hoursToSeconds, minutesToSeconds } = turnIntoSeconds()
+    let totalSeconds = hoursToSeconds + minutesToSeconds
+    console.log(totalPercentage, percentage)
+
+    const decreaseTime = setInterval(() => {
+      totalSeconds--
+      console.log(totalSeconds)
+
+      if(totalSeconds === 0) {
+        clearInterval(decreaseTime)
+        setTotalPercentage((quantity / dailyGoal) * 100)
+        setPercentage(totalPercentage + totalPercentage)
+
+        console.log(`Porcentagem total: ${totalPercentage}, Porcentagem Parcial: ${percentage}`)
+      }
+    }, 100)
+  }
+
   return (
     <div className="w-full h-screen bg-gray-500 text-gray-100">
       <main className="max-w-[690px] w-[90%] mx-auto pt-44">
@@ -19,31 +57,65 @@ export function App() {
 
         <div>
           <div>
-            <span>80%</span>
+            <span>{percentage}%</span>
             <img src={person} alt="Pessoa dando uma cambalhota" />
 
             <strong>Alongar</strong>
             <p>
-              Meta: <span>10</span>x
+              Meta: <span>{dailyGoal}</span>x
             </p>
           </div>
 
           <div>
-            <InputWrapper id="inputDailyGoal" label="Meta diária" />
-            <InputWrapper id="inputTimer" label="Quantidade por timer" />
+            <InputWrapper
+              id="inputDailyGoal"
+              label="Meta diária"
+              goal={dailyGoal}
+              max={100}
+              step={5}
+              setFunction={setDailyGoal}
+              value={dailyGoal}
+            />
+            <InputWrapper
+              id="inputTimer"
+              label="Quantidade por timer"
+              goal={quantity}
+              max={20}
+              step={5}
+              setFunction={setQuantity}
+              value={quantity}
+            />
 
-            <div>
+            <div className="text-black">
               <div>
-                <input type="number" id="inputHour" />
+                <IMaskInput
+                  mask="00"
+                  validate={(value) => {
+                    return Number(value) <= 23;
+                  }}
+                  onAccept={(e) => {
+                    setHours(Number(e))
+                  }}
+                />
                 <span>h</span>
               </div>
               <span>:</span>
               <div>
-                <input type="number" id="inputMinutes" />
+                <IMaskInput
+                  mask="00"
+                  validate={(value) => {
+                    return Number(value) <= 59;
+                  }}
+                  onAccept={(e) => {
+                    setMinutes(Number(e))
+                  }}
+                />
                 <span>m</span>
               </div>
             </div>
-            <button>
+            <button onClick={() => {
+              timer()
+            }}>
               <span>Começar</span>
               <ChevronRight />
             </button>
