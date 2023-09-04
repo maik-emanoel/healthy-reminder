@@ -9,8 +9,7 @@ import sticker from "./assets/sticker.png";
 export function App() {
   const [dailyGoal, setDailyGoal] = useState<number>(50);
   const [quantity, setQuantity] = useState<number>(5);
-  const [totalPercentage, setTotalPercentage] = useState(0)
-  const [percentage, setPercentage] = useState(0)
+  const [partialPercentage, setPartialPercentage] = useState(0)
 
   const [hours, setHours] = useState(0)
   const [minutes, setMinutes] = useState(0)
@@ -20,13 +19,12 @@ export function App() {
     const minutesToSeconds = minutes * 60
 
     console.log(`Hora para segundos: ${hoursToSeconds}, Minutos para segundos: ${minutesToSeconds}`)
-    return {hoursToSeconds, minutesToSeconds}
+    return { hoursToSeconds, minutesToSeconds }
   }
 
   function timer() {
     const { hoursToSeconds, minutesToSeconds } = turnIntoSeconds()
     let totalSeconds = hoursToSeconds + minutesToSeconds
-    console.log(totalPercentage, percentage)
 
     const decreaseTime = setInterval(() => {
       totalSeconds--
@@ -34,12 +32,14 @@ export function App() {
 
       if(totalSeconds === 0) {
         clearInterval(decreaseTime)
-        setTotalPercentage((quantity / dailyGoal) * 100)
-        setPercentage(totalPercentage + totalPercentage)
-
-        console.log(`Porcentagem total: ${totalPercentage}, Porcentagem Parcial: ${percentage}`)
+        const calcPercentage = (quantity / dailyGoal) * 100
+        setPartialPercentage(prevPercentage => prevPercentage + calcPercentage)
+        
+        if(partialPercentage >=  100) {
+          setPartialPercentage(100)
+        }
       }
-    }, 100)
+    }, 100) 
   }
 
   return (
@@ -57,7 +57,7 @@ export function App() {
 
         <div>
           <div>
-            <span>{percentage}%</span>
+            <span>{partialPercentage}%</span>
             <img src={person} alt="Pessoa dando uma cambalhota" />
 
             <strong>Alongar</strong>
