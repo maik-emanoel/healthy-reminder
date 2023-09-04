@@ -3,8 +3,18 @@
 @tailwind utilities;
 
 @layer base {
-    body, #root {
-        height: 100vh;
-        font-family: 'Poppins', sans-serif;
-    }
+  body, #root {
+    height: 100vh;
+    font-family: "Poppins", sans-serif;
+  }
+}
+
+@layer components {
+  .timeInputWrapper {
+    @apply flex items-center gap-1
+  }
+
+  .timeInput {
+    @apply w-16 h-16 py-4 rounded-[10px] text-center bg-gray-400 border border-gray-200 text-3xl leading-8 tracking-[0.96px] outline-none focus:border-blue placeholder:text-white;
+  }
 }
