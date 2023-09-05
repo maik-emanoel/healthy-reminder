@@ -48,8 +48,8 @@ export function App() {
   }
 
   return (
-    <div className="w-full h-screen bg-gray-500 text-gray-100">
-      <main className="max-w-[690px] w-[90%] mx-auto pt-44">
+    <div className="w-full h-screen bg-gray-500 text-gray-100 grid place-items-center">
+      <main className="max-w-[690px] w-[90%] mx-auto">
         <header className="flex items-center gap-2 mb-[76px]">
           <div className="w-16 h-16 rounded-full bg-gray-200 grid place-items-center">
             <img src={sticker} alt="Avatar" />
