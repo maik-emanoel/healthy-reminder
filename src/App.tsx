@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IMaskInput } from "react-imask";
 
 import { ChevronRight } from "lucide-react";
 import { InputWrapper } from "./components/InputWrapper";
 import person from "./assets/person.svg";
 import sticker from "./assets/sticker.png";
+import { touchIsSupported } from "./utils/touchUtil";
 
 export function App() {
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [remainingTime, setRemainingTime] = useState<number | null>(null)
+
   const [dailyGoal, setDailyGoal] = useState<number>(50);
   const [quantity, setQuantity] = useState<number>(5);
   const [partialPercentage, setPartialPercentage] = useState(0);
@@ -18,9 +23,6 @@ export function App() {
     const hoursToSeconds = hours * 3600;
     const minutesToSeconds = minutes * 60;
 
-    console.log(
-      `Hora para segundos: ${hoursToSeconds}, Minutos para segundos: ${minutesToSeconds}`
-    );
     return { hoursToSeconds, minutesToSeconds };
   }
 
@@ -30,22 +32,45 @@ export function App() {
 
     const decreaseTime = setInterval(() => {
       totalSeconds--;
+      setIsRunning(true);
+      setRemainingTime(totalSeconds)
       console.log(totalSeconds);
 
       if (totalSeconds === 0) {
         clearInterval(decreaseTime);
         const calcPercentage = (quantity / dailyGoal) * 100;
-        const roundedPercentage = Math.round(calcPercentage)
-        setPartialPercentage(
-          (prevPercentage) => prevPercentage + roundedPercentage
-        );
+        const roundedPercentage = Math.round(calcPercentage);
+        const newPartialPercentage = partialPercentage + roundedPercentage;
+        const updatedPartialPercentage =
+          newPartialPercentage <= 100 ? newPartialPercentage : 100;
 
-        if (partialPercentage >= 100) {
-          setPartialPercentage(100);
-        }
+        setPartialPercentage(updatedPartialPercentage);
+        setIsRunning(false);
+        setRemainingTime(null)
       }
-    }, 100);
+    }, 1000);
   }
+
+  function formatTime(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+    const minutes = Math.floor(seconds / 60);
+    seconds %= 60;
+  
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+  
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  useEffect(() => {
+    if (dailyGoal == 0 || quantity == 0 || (hours == 0 && minutes == 0)) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+  }, [dailyGoal, quantity, hours, minutes]);
 
   return (
     <div className="w-full h-screen bg-gray-500 text-gray-100 grid place-items-center">
@@ -61,7 +86,7 @@ export function App() {
         </header>
 
         <div className="flex justify-between">
-          <div className="bg-blue text-[#1F2128] px-10 py-8 rounded-[20px] text-center w-52 h-[340px] flex flex-col">
+          <div className="bg-blue text-[#1F2128] px-10 py-8 rounded-[20px] text-center w-52 h-[340px] flex flex-col overflow-hidden">
             <span className="text-xs font-bold tracking-[0.36px] mb-10">
               {partialPercentage}%
             </span>
@@ -69,7 +94,8 @@ export function App() {
               <img
                 src={person}
                 alt="Pessoa dando uma cambalhota"
-                className="mx-auto"
+                data-isrunning={isRunning}
+                className="mx-auto data-[isrunning=true]:animate-jump"
               />
             </div>
 
@@ -131,13 +157,28 @@ export function App() {
               </div>
             </div>
             <button
+              disabled={isDisabled}
+              data-isdisabled={isDisabled}
+              data-isrunning={isRunning}
+              data-istouchsupported={touchIsSupported}
+              className="bg-blue h-14 rounded-md text-gray-500 flex items-center justify-center gap-2 cursor-pointer transition-all duration-300
+              data-[isdisabled=true]:brightness-90 
+              data-[isdisabled=true]:pointer-events-none 
+              data-[isrunning=true]:pointer-events-none 
+              data-[isrunning=true]:select-none
+              data-[istouchsupported=false]:hover:brightness-110"
               onClick={() => {
                 timer();
               }}
-              className="bg-blue h-14 rounded-md text-gray-500 flex items-center justify-center gap-2"
             >
-              <span className="font-medium tracking-[0.48px]">Começar</span>
-              <ChevronRight />
+              {isRunning ? (
+                <p>{formatTime(remainingTime || 0)}</p>
+              ) : (
+                <>
+                  <span className="font-medium tracking-[0.48px]">Começar</span>
+                  <ChevronRight />
+                </>
+              )}
             </button>
           </div>
         </div>
