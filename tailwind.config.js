@@ -16,6 +16,16 @@ export default {
           '400': '#1D1B26',
           '500': '#0F0E13'
         }
+      },
+      animation: {
+        jump: 'jump .8s alternate infinite'
+      },
+      keyframes: {
+        jump: {
+          '100%': {
+            transform: 'translateY(-10px)'
+          }
+        }
       }
     },
   },
