@@ -7,6 +7,32 @@
     height: 100vh;
     font-family: "Poppins", sans-serif;
   }
+
+  input[type="range"] {
+    appearance: none;
+    height: 6px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #7FC4ED 0%, #322F40 50%);
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #7FC4ED;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    outline: 6px solid rgba(127, 196, 237, .10);
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    outline: 6px solid rgba(127, 196, 237, .2);
+    scale: .95;
+  }
 }
 
 @layer components {
