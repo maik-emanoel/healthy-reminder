@@ -6,6 +6,8 @@ import { InputWrapper } from "./components/InputWrapper";
 import person from "./assets/person.svg";
 import sticker from "./assets/sticker.png";
 import { touchIsSupported } from "./utils/touchUtil";
+import { Modal } from "./components/Modal";
+import { loadUserName, saveUserName } from "./utils/userNameUtil";
 
 export function App() {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -18,6 +20,8 @@ export function App() {
 
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
+
+  const [userName, setUserName] = useState<string | null>(loadUserName());
 
   function turnIntoSeconds() {
     const hoursToSeconds = hours * 3600;
@@ -70,7 +74,9 @@ export function App() {
     } else {
       setIsDisabled(false);
     }
-  }, [dailyGoal, quantity, hours, minutes]);
+    
+    saveUserName(userName)
+  }, [dailyGoal, quantity, hours, minutes, userName]);
 
   return (
     <div className="w-full h-screen bg-gray-500 text-gray-100 grid place-items-center">
@@ -81,7 +87,7 @@ export function App() {
           </div>
           <div className="flex flex-col gap-1 text-2xl leading-7">
             <span className="font-light">Boa tarde,</span>
-            <span className="font-semibold">Biro 👋</span>
+            <span className="font-semibold">{userName === null ? 'Biro' : userName} 👋</span>
           </div>
         </header>
 
@@ -183,6 +189,8 @@ export function App() {
           </div>
         </div>
       </main>
+
+      {userName === null && <Modal userName={userName} setFunction={setUserName} />}
     </div>
   );
 }
