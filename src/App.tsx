@@ -68,6 +68,21 @@ export function App() {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
 
+  let messageTime;
+  const hourNow = new Date().getHours()
+
+  function showMessageTime() {
+    if (hourNow >= 0 && hourNow < 12) {
+      messageTime = 'Bom dia';
+    } else if (hourNow >= 12 && hourNow < 18) {
+      messageTime = 'Boa tarde';
+    } else {
+      messageTime = 'Boa noite';
+    }
+
+    return messageTime
+  }
+
   useEffect(() => {
     if (dailyGoal == 0 || quantity == 0 || (hours == 0 && minutes == 0)) {
       setIsDisabled(true);
@@ -86,7 +101,7 @@ export function App() {
             <img src={sticker} alt="Avatar" />
           </div>
           <div className="flex flex-col gap-1 text-2xl leading-7">
-            <span className="font-light">Boa tarde,</span>
+            <span className="font-light">{showMessageTime()},</span>
             <span className="font-semibold">{userName === null ? 'Biro' : userName} 👋</span>
           </div>
         </header>
