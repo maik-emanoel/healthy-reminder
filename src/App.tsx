@@ -8,6 +8,8 @@ import sticker from "./assets/sticker.png";
 import { touchIsSupported } from "./utils/touchUtil";
 import { Modal } from "./components/Modal";
 import { loadUserName, saveUserName } from "./utils/userNameUtil";
+import { showMessageTime } from "./utils/messageTimeUtil";
+import { formatTime } from "./utils/formatTimeUtil";
 
 export function App() {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -38,7 +40,6 @@ export function App() {
       totalSeconds--;
       setIsRunning(true);
       setRemainingTime(totalSeconds)
-      console.log(totalSeconds);
 
       if (totalSeconds === 0) {
         clearInterval(decreaseTime);
@@ -55,34 +56,6 @@ export function App() {
     }, 1000);
   }
 
-  function formatTime(seconds: number) {
-    const hours = Math.floor(seconds / 3600);
-    seconds %= 3600;
-    const minutes = Math.floor(seconds / 60);
-    seconds %= 60;
-  
-    const formattedHours = String(hours).padStart(2, '0');
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    const formattedSeconds = String(seconds).padStart(2, '0');
-  
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-  }
-
-  let messageTime;
-  const hourNow = new Date().getHours()
-
-  function showMessageTime() {
-    if (hourNow >= 0 && hourNow < 12) {
-      messageTime = 'Bom dia';
-    } else if (hourNow >= 12 && hourNow < 18) {
-      messageTime = 'Boa tarde';
-    } else {
-      messageTime = 'Boa noite';
-    }
-
-    return messageTime
-  }
-
   useEffect(() => {
     if (dailyGoal == 0 || quantity == 0 || (hours == 0 && minutes == 0)) {
       setIsDisabled(true);
@@ -94,9 +67,9 @@ export function App() {
   }, [dailyGoal, quantity, hours, minutes, userName]);
 
   return (
-    <div className="w-full h-screen bg-gray-500 text-gray-100 grid place-items-center">
-      <main className="max-w-[690px] w-[90%] mx-auto">
-        <header className="flex items-center gap-2 mb-[76px]">
+    <div className="w-full h-screen bg-gray-500 text-gray-100 grid place-items-center md:h-full md:min-h-screen md:py-14">
+      <main className="max-w-[690px] w-[90%] mx-auto md:h-full md:flex md:flex-col md:items-center md:max-w-[320px]">
+        <header className="flex items-center gap-2 mb-[76px] md:self-start">
           <div className="w-16 h-16 rounded-full bg-gray-200 grid place-items-center">
             <img src={sticker} alt="Avatar" />
           </div>
@@ -106,8 +79,8 @@ export function App() {
           </div>
         </header>
 
-        <div className="flex justify-between">
-          <div className="bg-blue text-[#1F2128] px-10 py-8 rounded-[20px] text-center w-52 h-[340px] flex flex-col overflow-hidden">
+        <div className="flex justify-between md:flex-col md:w-full">
+          <div className="bg-blue text-[#1F2128] px-10 py-8 rounded-[20px] text-center w-52 h-[340px] flex flex-col md:mb-7 md:mx-auto">
             <span className="text-xs font-bold tracking-[0.36px] mb-10">
               {partialPercentage}%
             </span>
@@ -126,7 +99,7 @@ export function App() {
             </p>
           </div>
 
-          <div className="max-w-[320px] w-full flex flex-col justify-between">
+          <div className="max-w-[320px] w-full flex flex-col justify-between gap-7">
             <InputWrapper
               id="inputDailyGoal"
               label="Meta diária"
