@@ -25,6 +25,8 @@ export function App() {
 
   const [userName, setUserName] = useState<string | null>(loadUserName());
 
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false)
+
   function turnIntoSeconds() {
     const hoursToSeconds = hours * 3600;
     const minutesToSeconds = minutes * 60;
@@ -52,6 +54,7 @@ export function App() {
         setPartialPercentage(updatedPartialPercentage);
         setIsRunning(false);
         setRemainingTime(null)
+        setShowSuccessModal(true)
       }
     }, 1000);
   }
@@ -160,6 +163,7 @@ export function App() {
               data-[isdisabled=true]:pointer-events-none 
               data-[isrunning=true]:pointer-events-none 
               data-[isrunning=true]:select-none
+              data-[isrunning=true]:font-medium
               data-[istouchsupported=false]:hover:brightness-110"
               onClick={() => {
                 timer();
@@ -178,7 +182,8 @@ export function App() {
         </div>
       </main>
 
-      {userName === null && <Modal userName={userName} setFunction={setUserName} />}
+      {userName === null && <Modal userName={userName} setUserName={setUserName} />}
+      {showSuccessModal && <Modal showSuccessModal={showSuccessModal} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
 }
