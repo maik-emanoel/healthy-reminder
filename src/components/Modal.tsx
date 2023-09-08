@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { touchIsSupported } from "../utils/touchUtil";
 import person from "../assets/person.svg";
 
@@ -12,9 +12,24 @@ interface ModalProps {
 
 export function Modal(props: ModalProps) {
   const [inputNameValue, setInputNameValue] = useState<string | null>(null);
+  const modalRef = useRef(null)
+
+  useEffect(() => {
+    if(document.body.contains(modalRef.current)) {
+      window.scrollTo(0, 0)
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "initial"
+    }
+
+    return () => {
+      document.body.style.overflow = 'initial';
+    };
+  }, [])
+
 
   return (
-    <div className="absolute inset-0 bg-[#121317]/70 grid place-items-center">
+    <div className="absolute inset-0 bg-[#121317]/70 grid place-items-center" ref={modalRef}>
       <div className="bg-gray-400 rounded-3xl shadow-[17px_25px_57px_0px_rgba(17,16,24,0.25)] relative max-w-[300px] pt-16 px-11 pb-10 w-[85%] sm:px-7 sm:pt-10">
         {props.showSuccessModal && (
           <button
